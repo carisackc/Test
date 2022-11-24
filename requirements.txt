@@ -2,3 +2,4 @@ torch
 transformers
 evaluate
 spacy
+spacy download en_core_web_lg
