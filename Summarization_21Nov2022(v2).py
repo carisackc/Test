@@ -114,28 +114,6 @@ reference_text = original_text['Reference_text'].values
 
 
 
-## ===== to highlight text ===== 
-from IPython.core.display import HTML, display
-def visualize(title, sentence_list, best_sentences):
-  text = ''
-
-  #display(HTML(f'<h1>Summary - {title}</h1>'))
-  for sentence in sentence_list:
-    if sentence in best_sentences:
-      #text += ' ' + str(sentence).replace(sentence, f"<mark>{sentence}</mark>")
-      text += ' ' + str(sentence).replace(sentence, f"<span class='highlight yellow'>{sentence}</span>")
-    else:
-      text += ' ' + sentence
-      display(HTML(f""" {text} """))
-
-    output = ''   
-    best_sentences = []
-    for sentence in output:
-       #print(sentence)
-       best_sentences.append(str(sentence))
-    return text     
-# try this web solution https://discuss.streamlit.io/t/colored-boxes-around-sections-of-a-sentence/3201/2    
-
 #===== Pysummarization =====
 from pysummarization.nlpbase.auto_abstractor import AutoAbstractor
 from pysummarization.tokenizabledoc.simple_tokenizer import SimpleTokenizer
@@ -315,7 +293,6 @@ def run_model(input_text):
       
     elif model == "Gensim": 
         output=summarize(str(input_text))
-        #visualize('of text', input_text, output)
         st.write('Summary')
         st.success(output)
         
@@ -348,10 +325,6 @@ def run_model(input_text):
 if st.button('Submit'):
     run_model(runtext)
     
-#    runtext2=runtext.split('.')
-#    reference_text2=reference_text.split('.')
-    
-    st.write(visualize('of text', runtext ,reference_text))
-    
+   
     st.text_area('Reference text', str(reference_text))
     
