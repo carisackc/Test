@@ -50,7 +50,7 @@ st.sidebar.header("Search for Patient:")
 patientid = df['Patient_ID']
 patient = st.sidebar.selectbox('Select Patient ID:', patientid)
 admissionid = df['Admission_ID'].loc[df['Patient_ID'] == patient]
-HospitalAdmission = st.sidebar.selectbox('', admissionid) 
+HospitalAdmission = st.sidebar.selectbox(' ', admissionid) 
 
 #Another way to for filter selection 
 #patient = st.sidebar.multiselect(
