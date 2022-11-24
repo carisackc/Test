@@ -1,4 +1,4 @@
 torch
 transformers
 evaluate
-en_core_web_lg
+spacy
