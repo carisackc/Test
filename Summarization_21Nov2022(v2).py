@@ -165,21 +165,21 @@ def Sbert(input_text):
 
 
 
-##===== T5 Seq2Seq =====
-def t5seq2seq(input_text):
-    import torch
-    import torch.nn.functional as F
-    from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-    
-    model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
-    tokenizer = AutoTokenizer.from_pretrained("t5-base")
-
-    inputs = tokenizer("summarize: " + input_text, return_tensors="pt", max_length=512, truncation=True)
-    outputs = model.generate(inputs["input_ids"], max_length=150, min_length=40, length_penalty=2.0, num_beams=4, early_stopping=True)
-
-    summary= tokenizer.decode(outputs[0], skip_special_tokens=True)
-    
-    return summary
+####===== T5 Seq2Seq =====
+#def t5seq2seq(input_text):
+#    import torch
+#    import torch.nn.functional as F
+#    from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+#    
+#    model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
+#    tokenizer = AutoTokenizer.from_pretrained("t5-base")
+#
+#    inputs = tokenizer("summarize: " + input_text, return_tensors="pt", max_length=512, truncation=True)
+#    outputs = model.generate(inputs["input_ids"], max_length=150, min_length=40, length_penalty=2.0, num_beams=4, early_stopping=True)
+#
+#    summary= tokenizer.decode(outputs[0], skip_special_tokens=True)
+#    
+#    return summary
 
 def BertGPT2(input_text):
     #import nlp
@@ -311,11 +311,11 @@ def run_model(input_text):
         st.write('Summary')
         st.success(output)
         
-    elif model == "T5 Seq2Seq":
-        output = t5seq2seq(input_text)
-        st.write('Summary')
-        st.success(output)
-        
+#    elif model == "T5 Seq2Seq":
+#        output = t5seq2seq(input_text)
+#        st.write('Summary')
+#        st.success(output)
+#        
     elif model == "BertGPT2": #Not working correctly. to work on it later on 
         output = BertGPT2(input_text)
         st.write('Summary')
