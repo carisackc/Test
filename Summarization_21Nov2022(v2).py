@@ -31,7 +31,11 @@ df = pd.read_csv("demo_shpi_w_rouge21Nov.csv")
 #df.shape
 df['HADM_ID'] = df['HADM_ID'].astype(str).apply(lambda x: x.replace('.0',''))
 
-
+#Renaming column
+df.rename(columns={'SUBJECT_ID':'Patient_ID',
+                  'HADM_ID':'Admission_ID',
+                  'hpi_input_text':'Original_Text',
+                  'hpi_reference_summary':'Reference_text'}, inplace = True)
 #Filter selection 
 st.sidebar.header("Search for Patient:")
 
