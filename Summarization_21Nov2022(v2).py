@@ -228,7 +228,7 @@ abstractable_doc = TopNRankAbstractor()
 
 def run_model(input_text):
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    #device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     if model == "BART":
         bart_model = BartForConditionalGeneration.from_pretrained("facebook/bart-base")
