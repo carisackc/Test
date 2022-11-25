@@ -246,7 +246,7 @@ def BertGPT2(input_text):
     
     Sbert(input_text)
 
-device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+#device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
 
 def run_model(input_text):
