@@ -1,4 +1,4 @@
-import torch
+# import torch
 import streamlit as st
 from streamlit import components
 import pandas as pd
@@ -31,11 +31,6 @@ df = pd.read_csv("demo_shpi_w_rouge21Nov.csv")
 #df.shape
 df['HADM_ID'] = df['HADM_ID'].astype(str).apply(lambda x: x.replace('.0',''))
 
-#Renaming column
-df.rename(columns={'SUBJECT_ID':'Patient_ID',
-                  'HADM_ID':'Admission_ID',
-                  'hpi_input_text':'Original_Text',
-                  'hpi_reference_summary':'Reference_text'}, inplace = True)
 
 #Filter selection 
 st.sidebar.header("Search for Patient:")
@@ -274,10 +269,10 @@ def run_model(input_text):
         # st.write('Summary')
         # st.success(output)
         
-    # elif model == "Pysummarization":
-        # output = pysummarizer(input_text)
-        # st.write('Summary')
-        # st.success(output)
+    elif model == "Pysummarization":
+        output = pysummarizer(input_text)
+        st.write('Summary')
+        st.success(output)
         
     # elif model == "BERT": 
         # output = BertSummarizer(input_text)
