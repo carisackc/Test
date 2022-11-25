@@ -27,7 +27,7 @@ st.sidebar.markdown('Using transformer model')
 
 ## Loading in dataset
 #df = pd.read_csv('mtsamples_small.csv',index_col=0)
-df = pd.read_csv("shpi_w_rouge21Nov.csv")
+df = pd.read_csv("demo_shpi_w_rouge21Nov.csv")
 #df.shape
 df['HADM_ID'] = df['HADM_ID'].astype(str).apply(lambda x: x.replace('.0',''))
 
