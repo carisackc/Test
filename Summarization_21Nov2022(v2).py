@@ -1,4 +1,4 @@
-#import torch
+import torch
 import streamlit as st
 from streamlit import components
 import pandas as pd
@@ -31,18 +31,6 @@ df = pd.read_csv("demo_shpi_w_rouge21Nov.csv")
 #df.shape
 df['HADM_ID'] = df['HADM_ID'].astype(str).apply(lambda x: x.replace('.0',''))
 
-##Renaming column
-#df.rename(columns={'patient id':'Patient_ID',
-#                  'hospital admission id':'Admission_ID',
-#                  'transcription':'Original_Text'}, inplace = True)
-
-#Renaming column
-df.rename(columns={'SUBJECT_ID':'Patient_ID',
-                  'HADM_ID':'Admission_ID',
-                  'hpi_input_text':'Original_Text',
-                  'hpi_reference_summary':'Reference_text'}, inplace = True)
- 
- #data.rename(columns={'gdp':'log(gdp)'}, inplace=True)
 
 #Filter selection 
 st.sidebar.header("Search for Patient:")
@@ -51,21 +39,6 @@ patientid = df['Patient_ID']
 patient = st.sidebar.selectbox('Select Patient ID:', patientid)
 admissionid = df['Admission_ID'].loc[df['Patient_ID'] == patient]
 HospitalAdmission = st.sidebar.selectbox(' ', admissionid) 
-
-#Another way to for filter selection 
-#patient = st.sidebar.multiselect(
-#        "Select Patient ID:",
-#        options=df['Patient_ID'].unique(),
-#        default= None 
-#)
-
-
-#HospitalAdmission = st.sidebar.multiselect(
-#        "Select Hospital Admission ID:",
-#        options=df['Admission_ID'].unique(),
-#        #default=df['Admission_ID'].unique()
-#        default = None
-#)
 
 
 # List of Model available
@@ -125,126 +98,126 @@ auto_abstractor.tokenizable_doc = SimpleTokenizer()
 auto_abstractor.delimiter_list = [".", "\n"]
 abstractable_doc = TopNRankAbstractor()
 
-def pysummarizer(input_text):
-#    print(type(text))
-    summary = auto_abstractor.summarize(input_text, abstractable_doc)
-    best_sentences=[]
-    #summary_clean = ''.join([str(sentence).capitalize() for sentence in summary['summarize_result'] for summary['summarize_result'] in auto_abstractor.summarize(text, abstractable_doc)])
-    for sentence in summary['summarize_result']:
-        best_sentences.append(re.sub(r'\s+', ' ', sentence).strip())    
-    clean_summary=''.join(sentence for sentence in best_sentences)
-    return clean_summary
+# def pysummarizer(input_text):
+# #    print(type(text))
+    # summary = auto_abstractor.summarize(input_text, abstractable_doc)
+    # best_sentences=[]
+    # #summary_clean = ''.join([str(sentence).capitalize() for sentence in summary['summarize_result'] for summary['summarize_result'] in auto_abstractor.summarize(text, abstractable_doc)])
+    # for sentence in summary['summarize_result']:
+        # best_sentences.append(re.sub(r'\s+', ' ', sentence).strip())    
+    # clean_summary=''.join(sentence for sentence in best_sentences)
+    # return clean_summary
 
 
 
-##===== BERT Summary tokenizer =====
+# ##===== BERT Summary tokenizer =====
 
-def BertSummarizer(input_text):
-    from transformers import BigBirdTokenizer
-    from summarizer import Summarizer
+# def BertSummarizer(input_text):
+    # from transformers import BigBirdTokenizer
+    # from summarizer import Summarizer
 
-    bertsummarizer = Summarizer()
+    # bertsummarizer = Summarizer()
 
-    model = Summarizer()
-    result = model(input_text,ratio=0.4)
+    # model = Summarizer()
+    # result = model(input_text,ratio=0.4)
     
-    return result
+    # return result
 
 
-##===== SBERT =====
-from summarizer.sbert import SBertSummarizer
+# ##===== SBERT =====
+# from summarizer.sbert import SBertSummarizer
 
 
-Sbertmodel = SBertSummarizer('paraphrase-MiniLM-L6-v2')
+# Sbertmodel = SBertSummarizer('paraphrase-MiniLM-L6-v2')
 
-def Sbert(input_text):
+# def Sbert(input_text):
     
-#     Sbertresult = Sbertmodel(text, num_sentences=3)
-    Sbertresult = Sbertmodel(input_text, ratio=0.4)
-    return Sbertresult
+# #     Sbertresult = Sbertmodel(text, num_sentences=3)
+    # Sbertresult = Sbertmodel(input_text, ratio=0.4)
+    # return Sbertresult
 
 
 
-####===== T5 Seq2Seq =====
-#def t5seq2seq(input_text):
-#    import torch
-#    import torch.nn.functional as F
-#    from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-#    
-#    model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
-#    tokenizer = AutoTokenizer.from_pretrained("t5-base")
-#
-#    inputs = tokenizer("summarize: " + input_text, return_tensors="pt", max_length=512, truncation=True)
-#    outputs = model.generate(inputs["input_ids"], max_length=150, min_length=40, length_penalty=2.0, num_beams=4, early_stopping=True)
-#
-#    summary= tokenizer.decode(outputs[0], skip_special_tokens=True)
-#    
-#    return summary
+# ##===== T5 Seq2Seq =====
+# def t5seq2seq(input_text):
+    # import torch
+    # import torch.nn.functional as F
+    # from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+    
+    # model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
+    # tokenizer = AutoTokenizer.from_pretrained("t5-base")
 
-def BertGPT2(input_text):
-    #import nlp
+    # inputs = tokenizer("summarize: " + input_text, return_tensors="pt", max_length=512, truncation=True)
+    # outputs = model.generate(inputs["input_ids"], max_length=150, min_length=40, length_penalty=2.0, num_beams=4, early_stopping=True)
 
-    # BioClinicalBert with BERT2GPT2 model with GPT2 decoder
-    from transformers import BertTokenizer, GPT2Tokenizer, EncoderDecoderModel
-    from transformers import AutoTokenizer, AutoModel
+    # summary= tokenizer.decode(outputs[0], skip_special_tokens=True)
+    
+    # return summary
 
-    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-    model = EncoderDecoderModel.from_pretrained("patrickvonplaten/bert2gpt2-cnn_dailymail-fp16")
-    model.to(device)
+# def BertGPT2(input_text):
+    # #import nlp
 
-    #bert_tokenizer = BertTokenizer.from_pretrained("bert-base-cased")
-    bert_tokenizer= AutoTokenizer.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
+    # # BioClinicalBert with BERT2GPT2 model with GPT2 decoder
+    # from transformers import BertTokenizer, GPT2Tokenizer, EncoderDecoderModel
+    # from transformers import AutoTokenizer, AutoModel
 
-    # CLS token will work as BOS token
-    bert_tokenizer.bos_token = bert_tokenizer.cls_token
+    # device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    # model = EncoderDecoderModel.from_pretrained("patrickvonplaten/bert2gpt2-cnn_dailymail-fp16")
+    # model.to(device)
 
-    # SEP token will work as EOS token
-    bert_tokenizer.eos_token = bert_tokenizer.sep_token
+    # #bert_tokenizer = BertTokenizer.from_pretrained("bert-base-cased")
+    # bert_tokenizer= AutoTokenizer.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
 
+    # # CLS token will work as BOS token
+    # bert_tokenizer.bos_token = bert_tokenizer.cls_token
 
-    # make sure GPT2 appends EOS in begin and end
-    def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1=None):
-        outputs = [self.bos_token_id] + token_ids_0 + [self.eos_token_id]
-        return outputs
+    # # SEP token will work as EOS token
+    # bert_tokenizer.eos_token = bert_tokenizer.sep_token
 
 
-    GPT2Tokenizer.build_inputs_with_special_tokens = build_inputs_with_special_tokens
-    gpt2_tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    # set pad_token_id to unk_token_id -> be careful here as unk_token_id == eos_token_id == bos_token_id
-    gpt2_tokenizer.pad_token = gpt2_tokenizer.unk_token
+    # # make sure GPT2 appends EOS in begin and end
+    # def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1=None):
+        # outputs = [self.bos_token_id] + token_ids_0 + [self.eos_token_id]
+        # return outputs
 
 
-    # set decoding params
-    model.config.decoder_start_token_id = gpt2_tokenizer.bos_token_id
-    model.config.eos_token_id = gpt2_tokenizer.eos_token_id
-    model.config.max_length = 142
-    model.config.min_length = 56
-    model.config.no_repeat_ngram_size = 3
-    model.early_stopping = True
-    model.length_penalty = 2.0
-    model.num_beams = 4
+    # GPT2Tokenizer.build_inputs_with_special_tokens = build_inputs_with_special_tokens
+    # gpt2_tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+    # # set pad_token_id to unk_token_id -> be careful here as unk_token_id == eos_token_id == bos_token_id
+    # gpt2_tokenizer.pad_token = gpt2_tokenizer.unk_token
 
-    #test_dataset = nlp.load_dataset("cnn_dailymail", "3.0.0", split="test")
 
-    batch_size = 64
+    # # set decoding params
+    # model.config.decoder_start_token_id = gpt2_tokenizer.bos_token_id
+    # model.config.eos_token_id = gpt2_tokenizer.eos_token_id
+    # model.config.max_length = 142
+    # model.config.min_length = 56
+    # model.config.no_repeat_ngram_size = 3
+    # model.early_stopping = True
+    # model.length_penalty = 2.0
+    # model.num_beams = 4
+
+    # #test_dataset = nlp.load_dataset("cnn_dailymail", "3.0.0", split="test")
+
+    # batch_size = 64
  
-    def Sbertmodel(batch):
-        # Tokenizer will automatically set [BOS] <text> [EOS]
-        # cut off at BERT max length 512
-        inputs = bert_tokenizer(batch, padding="max_length", truncation=True, max_length=512, return_tensors="pt")
-        input_ids = inputs.input_ids.to("cuda")
-        attention_mask = inputs.attention_mask.to("cuda")
+    # def Sbertmodel(batch):
+        # # Tokenizer will automatically set [BOS] <text> [EOS]
+        # # cut off at BERT max length 512
+        # inputs = bert_tokenizer(batch, padding="max_length", truncation=True, max_length=512, return_tensors="pt")
+        # input_ids = inputs.input_ids.to("cuda")
+        # attention_mask = inputs.attention_mask.to("cuda")
 
-        outputs = model.generate(input_ids, attention_mask=attention_mask)
+        # outputs = model.generate(input_ids, attention_mask=attention_mask)
 
-        # all special tokens including will be removed
-        output_str = gpt2_tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        # # all special tokens including will be removed
+        # output_str = gpt2_tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-        #batch["pred"] = output_str
+        # #batch["pred"] = output_str
 
-        return output_str
+        # return output_str
     
-    Sbert(input_text)
+    # Sbert(input_text)
 
 #device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
@@ -291,35 +264,35 @@ def run_model(input_text):
         st.success(output[0])
         
       
-    elif model == "Gensim": 
-        output=summarize(str(input_text))
-        st.write('Summary')
-        st.success(output)
+    # elif model == "Gensim": 
+        # output=summarize(str(input_text))
+        # st.write('Summary')
+        # st.success(output)
         
-    elif model == "Pysummarization":
-        output = pysummarizer(input_text)
-        st.write('Summary')
-        st.success(output)
+    # elif model == "Pysummarization":
+        # output = pysummarizer(input_text)
+        # st.write('Summary')
+        # st.success(output)
         
-    elif model == "BERT": 
-        output = BertSummarizer(input_text)
-        st.write('Summary')
-        st.success(output)
+    # elif model == "BERT": 
+        # output = BertSummarizer(input_text)
+        # st.write('Summary')
+        # st.success(output)
         
-    elif model == "SBERT Summary Tokenizer": 
-        output = Sbert(input_text)
-        st.write('Summary')
-        st.success(output)
+    # elif model == "SBERT Summary Tokenizer": 
+        # output = Sbert(input_text)
+        # st.write('Summary')
+        # st.success(output)
         
-#    elif model == "T5 Seq2Seq":
-#        output = t5seq2seq(input_text)
-#        st.write('Summary')
-#        st.success(output)
-#        
-    elif model == "BertGPT2": #Not working correctly. to work on it later on 
-        output = BertGPT2(input_text)
-        st.write('Summary')
-        st.success(output)
+# #    elif model == "T5 Seq2Seq":
+# #        output = t5seq2seq(input_text)
+# #        st.write('Summary')
+# #        st.success(output)
+# #        
+    # elif model == "BertGPT2": #Not working correctly. to work on it later on 
+        # output = BertGPT2(input_text)
+        # st.write('Summary')
+        # st.success(output)
 
 
 if st.button('Submit'):
